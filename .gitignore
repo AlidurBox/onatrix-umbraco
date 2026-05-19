@@ -17,6 +17,7 @@ umbraco/Data/*.db
 umbraco/Data/*.db-*
 umbraco/Data/*.sqlite
 umbraco/Data/*.sqlite-*
+!umbraco/Data/Umbraco.sqlite.db
 
 # ASP.NET local secrets
 secrets.json
