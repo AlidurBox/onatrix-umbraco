@@ -1,0 +1,105 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@using System.Net
+@using System.Text.RegularExpressions
+@model BlockListItem
+
+@{
+    var content = Model.Content;
+    var grid = content.Value<BlockGridModel>("form");
+
+    var eyebrow = content.Value<string>("eyebrow");
+    if (string.IsNullOrWhiteSpace(eyebrow)) { eyebrow = "About Us"; }
+    var author = content.Value<string>("author");
+    if (string.IsNullOrWhiteSpace(author)) { author = "Tina Fox – CEO & Founder"; }
+
+    var textBlocks = new List<string>();
+    var images = new List<MediaWithCrops>();
+    string formTitle = null;
+    string formIntro = null;
+    string formMarkup = null;
+
+    if (grid != null)
+    {
+        foreach (var item in grid)
+        {
+            var el = item.Content;
+            switch (el.ContentType.Alias)
+            {
+                case "textBlock":
+                    var t = el.Value<string>("text");
+                    if (!string.IsNullOrWhiteSpace(t)) { textBlocks.Add(t); }
+                    break;
+                case "imageBlock":
+                    var m = el.Value<MediaWithCrops>("image");
+                    if (m != null && !string.IsNullOrWhiteSpace(m.Url())) { images.Add(m); }
+                    break;
+                case "contactFormBlock":
+                    formTitle = el.Value<string>("formTitle") ?? "Request a call back";
+                    var raw = el.Value<string>("formHtml") ?? "";
+                    for (var i = 0; i < 2 && raw.Contains("&lt;"); i++)
+                    {
+                        raw = WebUtility.HtmlDecode(raw);
+                    }
+                    raw = Regex.Replace(raw, "</?p[^>]*>", "", RegexOptions.IgnoreCase).Trim();
+                    var fi = raw.IndexOf("<form", StringComparison.OrdinalIgnoreCase);
+                    if (fi > 0)
+                    {
+                        formIntro = raw.Substring(0, fi).Trim();
+                        formMarkup = raw.Substring(fi).Trim();
+                    }
+                    else
+                    {
+                        formMarkup = raw;
+                    }
+                    break;
+            }
+        }
+    }
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" />
+<link rel="stylesheet" href="~/css/HeroformBlock.css" />
+
+<section class="heroform">
+    <div class="heroform__inner">
+        <div class="heroform__about">
+            <p class="heroform__eyebrow">@eyebrow</p>
+
+            @for (var i = 0; i < textBlocks.Count; i++)
+            {
+                var cls = i == 0 ? "heroform__heading"
+                        : i == 1 ? "heroform__quote"
+                        : "heroform__text";
+                <div class="@cls">@Html.Raw(textBlocks[i])</div>
+            }
+
+            @foreach (var media in images)
+            {
+                <img class="heroform__signature" src="@media.Url()" alt="@(media.Content?.Name)" loading="lazy" />
+            }
+            <p class="heroform__author">@author</p>
+        </div>
+
+        @if (formTitle != null || formMarkup != null)
+        {
+            <div class="heroform__card">
+                <h3 class="heroform__card-title">@(formTitle ?? "Request a call back")</h3>
+                <div class="heroform__card-body">
+                    @if (!string.IsNullOrWhiteSpace(formIntro))
+                    {
+                        <p class="heroform__form-intro">@Html.Raw(formIntro)</p>
+                    }
+                    @if (!string.IsNullOrWhiteSpace(formMarkup))
+                    {
+                        @Html.Raw(formMarkup)
+                    }
+                </div>
+            </div>
+        }
+    </div>
+</section>

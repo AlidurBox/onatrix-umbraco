@@ -1,0 +1,56 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var c = Model?.Content;
+    string V(string alias, string fallback)
+    {
+        var v = c?.Value<string>(alias);
+        return string.IsNullOrWhiteSpace(v) ? fallback : v;
+    }
+
+    var eyebrow = V("eyebrow", "Success Stories");
+    var title = V("title", "Success story");
+    var stat1Number = V("stat1Number", "689");
+    var stat1Label = V("stat1Label", "More than 689 customers has been served");
+    var stat2Number = V("stat2Number", "370");
+    var stat2Label = V("stat2Label", "More than 370 projects has been completed");
+    var stat3Number = V("stat3Number", "125");
+    var stat3Label = V("stat3Label", "More than 125 branches has been established in Europe and America");
+
+    var media = c?.Value<MediaWithCrops>("image");
+    var imgUrl = media?.Url();
+    if (string.IsNullOrWhiteSpace(imgUrl)) { imgUrl = Url.Content("~/img/success-meeting.jpg"); }
+}
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" />
+<link rel="stylesheet" href="~/css/HomeSections.css" asp-append-version="true" />
+
+<section class="success-story hs-dots">
+    <div class="success-story__inner">
+        <p class="success-story__eyebrow">@eyebrow</p>
+        <h2 class="success-story__title">@title</h2>
+
+        <div class="success-story__stats">
+            <div>
+                <div class="success-story__num">@stat1Number</div>
+                <p class="success-story__label">@stat1Label</p>
+            </div>
+            <div>
+                <div class="success-story__num">@stat2Number</div>
+                <p class="success-story__label">@stat2Label</p>
+            </div>
+            <div>
+                <div class="success-story__num">@stat3Number</div>
+                <p class="success-story__label">@stat3Label</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="success-story__photo-wrap">
+        <img class="success-story__photo" src="@imgUrl" alt="@title" loading="lazy" />
+    </div>
+</section>

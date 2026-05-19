@@ -1,0 +1,29 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@using Umbraco.Cms.Core.Models.Blocks;
+
+@{
+    Layout = "Shared/Master.cshtml";
+    var blocks = Model?.Value<BlockListModel>("blocks");
+    var children = Model?.Children()?.Where(x => x.IsVisible()).ToList();
+}
+
+@await Html.PartialAsync("Umbraco/BlockList", blocks)
+
+@if (children?.Any() == true)
+{
+    <section style="padding:60px 0; background:#fff;">
+        <div style="max-width:1100px; margin:0 auto; padding:0 20px;">
+            <h2 style="font-size:32px; margin-bottom:30px;">Projects</h2>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:24px;">
+                @foreach (var child in children)
+                {
+                    <a href="@child.Url()" style="display:block; background:#fff; padding:24px; border-radius:8px; text-decoration:none; color:#2b2b2b; box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                        <h3 style="font-size:20px; margin:0 0 10px;">@child.Name()</h3>
+                        <span style="color:#4f5954; font-weight:600;">View project</span>
+                    </a>
+                }
+            </div>
+        </div>
+    </section>
+}

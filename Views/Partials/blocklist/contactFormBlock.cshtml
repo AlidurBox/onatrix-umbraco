@@ -1,0 +1,37 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Extensions
+@using System.Net
+@model BlockListItem
+
+@{
+    var content = Model.Content;
+    string title = content.Value<string>("formTitle") ?? "Contact us";
+    string html = content.Value<string>("formHtml") ?? "";
+    string decodedHtml = WebUtility.HtmlDecode(html);
+}
+
+<section style="padding:60px 0; background:#fff;">
+    <div style="max-width:900px; margin:0 auto; padding:40px; border-radius:12px; border:1px solid #e0e0e0; box-shadow:0 2px 8px rgba(0,0,0,0.05);">
+        <h2 style="font-size:32px; font-weight:700; margin-bottom:30px; color:#2b2b2b; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">@title</h2>
+
+        @if (!string.IsNullOrWhiteSpace(decodedHtml) && decodedHtml.Contains("<input", StringComparison.OrdinalIgnoreCase))
+        {
+            <div style="font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                @Html.Raw(decodedHtml)
+            </div>
+        }
+        else
+        {
+            <form style="display:flex; flex-direction:column; gap:20px; font-family:'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;">
+                <input type="text" name="name" placeholder="Your Name" required style="padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; font-family:inherit;" />
+                <input type="email" name="email" placeholder="Your Email" required style="padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; font-family:inherit;" />
+                <input type="tel" name="phone" placeholder="Phone Number" style="padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; font-family:inherit;" />
+                <textarea name="message" placeholder="Message" rows="5" style="padding:14px; border:1px solid #ddd; border-radius:6px; font-size:15px; font-family:inherit; resize:vertical;"></textarea>
+                <button type="submit" style="background:#4f5954; color:#fff; padding:15px 30px; border:none; border-radius:6px; font-weight:600; font-size:16px; cursor:pointer; font-family:inherit;">
+                    Send
+                </button>
+            </form>
+        }
+    </div>
+</section>

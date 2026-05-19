@@ -1,0 +1,53 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var content = Model.Content;
+    var title = content.Value<string>("title") ?? "";
+    var subtitle = content.Value<string>("subtitle") ?? "";
+    var media = content.Value<MediaWithCrops>("image");
+    string imgUrl = media?.Url() ?? null;
+    var backgroundStyle = !string.IsNullOrWhiteSpace(imgUrl) ? $"background-image: url('{imgUrl}');" : "";
+
+    var ctaText = content.Value<string>("ctaText");
+    if (string.IsNullOrWhiteSpace(ctaText)) { ctaText = "Contact us"; }
+    var ctaLink = content.Value<string>("ctaLink");
+    if (string.IsNullOrWhiteSpace(ctaLink)) { ctaLink = "/contact"; }
+
+    var titleHtml = System.Net.WebUtility.HtmlEncode(title);
+    titleHtml = System.Text.RegularExpressions.Regex.Replace(
+        titleHtml, @"(?i)\b(bring)\s+", "$1<br>");
+
+    var subtitleHtml = System.Net.WebUtility.HtmlEncode(subtitle);
+    subtitleHtml = System.Text.RegularExpressions.Regex.Replace(
+        subtitleHtml, @"(?i)(\bdo)\s+(eiusmod)\b", "$1<br>$2");
+    subtitleHtml = System.Text.RegularExpressions.Regex.Replace(
+        subtitleHtml, @"(?i)(enim)\s+(ad)\b", "$1<br>$2");
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" />
+<link rel="stylesheet" href="~/css/HeroBlock.css" />
+
+<section class="hero-block @(string.IsNullOrWhiteSpace(imgUrl) ? "" : "hero-block--with-bg")" style="@backgroundStyle">
+    <div class="hero-block__overlay"></div>
+    <div class="hero-block__inner">
+        <div class="hero-block__content">
+            @if (!string.IsNullOrWhiteSpace(title))
+            {
+                <h1 class="hero-block__title">@Html.Raw(titleHtml)</h1>
+            }
+            @if (!string.IsNullOrWhiteSpace(subtitle))
+            {
+                <p class="hero-subtitle">@Html.Raw(subtitleHtml)</p>
+            }
+            <div class="hero-block__actions">
+                <a href="@ctaLink" class="hero-block__cta">@ctaText</a>
+            </div>
+        </div>
+    </div>
+</section>

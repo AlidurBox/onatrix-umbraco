@@ -1,0 +1,10 @@
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@using Umbraco.Cms.Core.Models.Blocks;
+
+@{
+    Layout = "Shared/Master.cshtml";
+    var blocks = Model?.Value<BlockListModel>("blocks");
+}
+
+@await Html.PartialAsync("Umbraco/BlockList", blocks)

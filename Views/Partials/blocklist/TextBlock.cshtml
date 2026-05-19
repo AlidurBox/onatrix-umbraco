@@ -1,0 +1,18 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var content = Model.Content;
+    var text = content.Value<string>("text") ?? "";
+}
+
+<div style="max-width:1100px; margin:0 auto; padding:60px 20px;">
+    @if (!string.IsNullOrWhiteSpace(text))
+    {
+        <div style="font-size:18px; line-height:1.8; color:#333;">
+            @Html.Raw(text)
+        </div>
+    }
+</div>

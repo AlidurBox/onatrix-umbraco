@@ -1,0 +1,19 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var c = Model?.Content;
+    var media = c?.Value<MediaWithCrops>("image");
+    var imgUrl = media?.Url();
+    if (string.IsNullOrWhiteSpace(imgUrl)) { imgUrl = "/media/ficmrrfi/partners.png"; }
+}
+
+<link rel="stylesheet" href="~/css/HomeSections.css" asp-append-version="true" />
+
+<section class="partners">
+    <div class="partners__inner">
+        <img class="partners__strip" src="@imgUrl" alt="Our partners" loading="lazy" />
+    </div>
+</section>

@@ -1,0 +1,97 @@
+@using Umbraco.Cms.Web.Common.PublishedModels;
+@using Umbraco.Cms.Core.Models.PublishedContent;
+@using System.Collections.Generic;
+@using System.Linq;
+@using System;
+@inherits Umbraco.Cms.Web.Common.Views.UmbracoViewPage
+
+@{
+    var root = Umbraco.ContentAtRoot().FirstOrDefault();
+    var pages = root?.Children()?.Where(x => x.IsVisible())?.ToList();
+
+    var navItems = new[] { "About", "Services", "Projects", "Contact" };
+
+    var navPages = new Dictionary<string, IPublishedContent>(StringComparer.OrdinalIgnoreCase);
+    if (pages != null)
+    {
+        foreach (var page in pages)
+        {
+            var pageName = page.Name();
+            var matchingItem = navItems.FirstOrDefault(item => item.Equals(pageName, StringComparison.OrdinalIgnoreCase));
+            if (matchingItem != null)
+            {
+                navPages[matchingItem] = page;
+            }
+        }
+    }
+}
+
+<div class="topbar">
+    <div class="topbar-inner">
+        <div class="topbar-left">
+            Klarabergsviadukten 90, 111 64 Stockholm
+        </div>
+
+        <div class="topbar-right">
+            <span class="icon fb" style="cursor: default;"><i class="uil uil-facebook"></i></span>
+            <span class="icon tw" style="cursor: default;"><i class="uil uil-twitter"></i></span>
+            <span class="icon ln" style="cursor: default;"><i class="uil uil-linkedin"></i></span>
+        </div>
+    </div>
+</div>
+
+<nav class="mainnav">
+    <div class="mainnav-inner">
+        <div class="nav-left">
+            <a href="/" class="logo-link">
+                <img src="/media/Brand.svg" alt="Onatrix logo" class="nav-logo" />
+            </a>
+        </div>
+
+        <div class="nav-center">
+            @foreach (var item in navItems)
+            {
+                var page = navPages.ContainsKey(item) ? navPages[item] : null;
+                var url = page?.Url() ?? "/" + item.ToLower();
+
+                var isActive = false;
+                if (Model != null && page != null)
+                {
+                    if (Model.Id == page.Id)
+                    {
+                        isActive = true;
+                    }
+                    else if (Model.Parent != null && Model.Parent.Id == page.Id)
+                    {
+                        isActive = true;
+                    }
+                    else if (Model.Ancestors().Any(a => a.Id == page.Id))
+                    {
+                        isActive = true;
+                    }
+                }
+                else if (Model == null && item.Equals("About", StringComparison.OrdinalIgnoreCase) && Context.Request.Path.Value == "/")
+                {
+                    isActive = true;
+                }
+
+                var activeClass = isActive ? "active" : "";
+
+                if (item.Equals("Projects", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="/" class="nav-item @activeClass">@item</a>
+                }
+                else
+                {
+                    <a href="@url" class="nav-item @activeClass">@item</a>
+                }
+            }
+        </div>
+
+        <div class="nav-right">
+            <span class="search-btn" style="cursor: default; display: inline-block;" aria-label="Search">
+                <i class="uil uil-search"></i>
+            </span>
+        </div>
+    </div>
+</nav>

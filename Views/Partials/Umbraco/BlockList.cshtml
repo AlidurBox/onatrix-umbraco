@@ -1,0 +1,43 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@model IEnumerable<BlockListItem>
+
+@if (Model?.Any() != true)
+{
+    return;
+}
+
+@foreach (var block in Model)
+{
+    if (block?.Content == null)
+    {
+        continue;
+    }
+
+    var alias = block.Content.ContentType.Alias;
+    var partial = alias switch
+    {
+        "heroBlock" => "blocklist/HeroBlock",
+        "ourServices" => "blocklist/OurServicesBlock",
+        "heroform" => "blocklist/HeroformBlock",
+        "textBlock" => "blocklist/TextBlock",
+        "imageBlock" => "blocklist/ImageBlock",
+        "twoColumnBlock" => "blocklist/TwoColumnBlock",
+        "textAndTitle" => "blocklist/TextAndTitleBlock",
+        "contactFormBlock" => "blocklist/contactFormBlock",
+        "whyChooseUs" => "blocklist/sections/WhyChooseUs",
+        "successStory" => "blocklist/sections/SuccessStory",
+        "partners" => "blocklist/sections/Partners",
+        "siteFooter" => "blocklist/sections/SiteFooter",
+        _ => null
+    };
+
+    if (partial == null)
+    {
+        <div style="max-width:1100px; margin:20px auto; padding:20px; background:#fff3cd; color:#664d03;">
+            Missing partial for block alias: <strong>@alias</strong>
+        </div>
+        continue;
+    }
+
+    @await Html.PartialAsync(partial, block)
+}

@@ -1,0 +1,49 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var content = Model.Content;
+    var media = content.Value<MediaWithCrops>("image");
+    string imgUrl = media?.Url() ?? null;
+
+    var key = (imgUrl ?? "").ToLowerInvariant();
+    string sectionPartial =
+        key.Contains("partners") ? "blocklist/sections/Partners" :
+        key.Contains("footer") ? "blocklist/sections/SiteFooter" :
+        null;
+}
+
+@if (sectionPartial != null)
+{
+    @await Html.PartialAsync(sectionPartial, (BlockListItem)null)
+}
+else if (imgUrl != null && key.Contains("paging"))
+{
+    <div style="text-align:center; padding:36px 20px;">
+        <img src="@imgUrl" style="display:inline-block; width:auto; max-width:150px; height:auto;" alt="@media?.Name" />
+    </div>
+}
+else if (imgUrl != null && key.Contains("about"))
+{
+    <div style="padding:60px 20px;">
+        <img src="@imgUrl" style="display:block; width:100%; max-width:760px; height:auto; margin:0 auto;" alt="@media?.Name" />
+    </div>
+}
+else if (imgUrl != null && key.Contains("contact-info"))
+{
+    <div class="contact-info-block">
+        <img src="@imgUrl" style="display:block; width:100%; height:auto;" alt="@media?.Name" />
+    </div>
+}
+else if (imgUrl != null && key.Contains("why-choose-us"))
+{
+    <div style="padding:8px 20px 0; line-height:0;">
+        <img src="@imgUrl" style="display:block; width:100%; max-width:820px; height:auto; margin:0 auto;" alt="@media?.Name" />
+    </div>
+}
+else if (imgUrl != null)
+{
+    <img src="@imgUrl" style="display:block; width:100%;" alt="@media?.Name" />
+}

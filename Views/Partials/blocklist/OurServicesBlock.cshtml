@@ -1,0 +1,74 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@model BlockListItem
+@inject Umbraco.Cms.Web.Common.UmbracoHelper Umbraco
+
+@{
+    var content = Model.Content;
+
+    var projectsUrl = Umbraco.ContentAtRoot()
+        .SelectMany(r => r.DescendantsOrSelf())
+        .FirstOrDefault(c => c.ContentType.Alias == "projectsPage")
+        ?.Url();
+
+    var headingLines = content.Value<IEnumerable<string>>("text");
+    var heading = headingLines != null
+        ? string.Join(" ", headingLines.Where(s => !string.IsNullOrWhiteSpace(s)))
+        : (content.Value<string>("text") ?? "");
+
+    var eyebrow = content.Value<string>("eyebrow");
+    var grid = content.Value<IEnumerable<MediaWithCrops>>("grid") ?? Enumerable.Empty<MediaWithCrops>();
+
+    var images = grid
+        .Where(m => m != null && !string.IsNullOrWhiteSpace(m.Url()))
+        .ToList();
+}
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" />
+<link rel="stylesheet" href="~/css/OurServicesBlock.css" />
+
+<section class="our-services">
+    <div class="our-services__inner">
+        @if (!string.IsNullOrWhiteSpace(eyebrow))
+        {
+            <p class="our-services__eyebrow">@eyebrow</p>
+        }
+
+        @if (!string.IsNullOrWhiteSpace(heading))
+        {
+            <h2 class="our-services__title">@heading</h2>
+        }
+
+        @if (images.Any())
+        {
+            <div class="our-services__grid">
+                @{ var cardIndex = 0; }
+                @foreach (var media in images)
+                {
+                    var url = media.Url();
+                    var name = media.Content?.Name ?? "Service";
+                    var linkFirst = cardIndex == 0 && !string.IsNullOrWhiteSpace(projectsUrl);
+                    cardIndex++;
+                    <article class="our-services__card">
+                        <div class="our-services__media">
+                            @if (linkFirst)
+                            {
+                                <a href="@projectsUrl" aria-label="View projects">
+                                    <img src="@url" alt="@name" loading="lazy" />
+                                </a>
+                            }
+                            else
+                            {
+                                <img src="@url" alt="@name" loading="lazy" />
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+</section>

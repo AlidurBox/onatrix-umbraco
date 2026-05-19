@@ -1,0 +1,17 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var c = Model?.Content;
+    var text = c?.Value<string>("text");
+    if (string.IsNullOrWhiteSpace(text)) { text = "© Onatrix. All Rights Reserved. Credits to"; }
+    var creditLabel = c?.Value<string>("creditLabel");
+    if (string.IsNullOrWhiteSpace(creditLabel)) { creditLabel = "Themesflat"; }
+}
+
+<link rel="stylesheet" href="~/css/HomeSections.css" asp-append-version="true" />
+
+<footer class="site-footer-coded">
+    <img src="/media/50ab2njm/footer.png" alt="@text @creditLabel." class="site-footer-coded__img" />
+</footer>

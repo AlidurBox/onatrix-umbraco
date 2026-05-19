@@ -1,0 +1,22 @@
+.DS_Store
+
+# Build output
+bin/
+obj/
+
+# User/local files
+*.user
+*.suo
+.vs/
+.vscode/
+
+# Umbraco local runtime data
+umbraco/Data/TEMP/
+umbraco/Logs/
+umbraco/Data/*.db
+umbraco/Data/*.db-*
+umbraco/Data/*.sqlite
+umbraco/Data/*.sqlite-*
+
+# ASP.NET local secrets
+secrets.json

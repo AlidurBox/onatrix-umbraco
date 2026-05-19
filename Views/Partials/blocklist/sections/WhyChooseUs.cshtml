@@ -1,0 +1,39 @@
+@using Umbraco.Cms.Core.Models.Blocks
+@using Umbraco.Cms.Core.Models
+@using Umbraco.Cms.Core.Models.PublishedContent
+@using Umbraco.Extensions
+@model BlockListItem
+
+@{
+    var c = Model?.Content;
+    string V(string alias, string fallback)
+    {
+        var v = c?.Value<string>(alias);
+        return string.IsNullOrWhiteSpace(v) ? fallback : v;
+    }
+
+    var eyebrow = V("eyebrow", "Why Choose Us");
+    var heading = V("heading", "We are trusted by more than");
+    var highlight = V("highlight", "4.000+ clients");
+    var bodyText = V("bodyText", "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nulla quis molestae nulla. Nam accumsan porttitor accuso tincidunt lectus tincidunt sed.");
+    var buttonText = V("buttonText", "Read our story");
+    var buttonLink = V("buttonLink", "/about");
+
+    var media = c?.Value<MediaWithCrops>("image");
+    var imgUrl = media?.Url();
+    if (string.IsNullOrWhiteSpace(imgUrl)) { imgUrl = Url.Content("~/img/trusted-team.png"); }
+}
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@600;700;800&display=swap" />
+<link rel="stylesheet" href="~/css/HomeSections.css" asp-append-version="true" />
+
+<section class="trusted hs-dots--dark">
+    <div class="trusted__inner">
+        <p class="trusted__eyebrow">@eyebrow</p>
+        <h2 class="trusted__title">@heading<br /><span>@highlight</span></h2>
+        <p class="trusted__text">@bodyText</p>
+        <a href="@buttonLink" class="trusted__btn">@buttonText</a>
+
+        <img class="trusted__photo" src="@imgUrl" alt="@heading" loading="lazy" />
+    </div>
+</section>
